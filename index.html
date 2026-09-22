@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Wheely the magic wheel</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script type="module" crossorigin src="./assets/index-eF3QTaBj.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-CeyewmRr.css">
+</head>
+<body>
+
+<canvas id="confetti"></canvas>
+
+<div class="cabinet">
+  <main>
+    <div class="wheel-stage">
+      <div class="wheel-shell" id="wheelShell">
+        <div class="wheel-frame" id="wheelFrame">
+          <canvas id="wheel" width="800" height="800"></canvas>
+          <div class="hub"></div>
+          <div class="peg" id="peg">
+            <svg width="26" height="34" viewBox="0 0 26 34">
+              <path d="M13 34 L2 8 Q2 0 13 0 Q24 0 24 8 Z" fill="#ff6b6b" stroke="#7a1f1f" stroke-width="1.5"/>
+            </svg>
+          </div>
+        </div>
+        <button type="button" id="muteBtn" class="icon-btn wheel-mute-btn" aria-pressed="false" aria-label="Mute sound" title="Mute sound">
+          <svg class="icon-on" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="4,9 8,9 13,4 13,20 8,15 4,15" fill="currentColor" stroke="none"/>
+            <path d="M16 8a5 5 0 0 1 0 8"/>
+            <path d="M18.5 5.5a9 9 0 0 1 0 13"/>
+          </svg>
+          <svg class="icon-off" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="4,9 8,9 13,4 13,20 8,15 4,15" fill="currentColor" stroke="none"/>
+            <line x1="16" y1="9" x2="22" y2="15"/>
+            <line x1="22" y1="9" x2="16" y2="15"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="winner-badge" id="winnerBadge"></div>
+    </div>
+
+    <div class="ticket">
+      <div class="ticket-header">
+        <label class="field-label" for="names">Contestants (one per line)</label>
+        <button type="button" id="shareBtn" class="icon-btn" aria-label="Copy shareable link" title="Copy shareable link">
+          <svg class="icon-on" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="18" cy="5" r="3"/>
+            <circle cx="6" cy="12" r="3"/>
+            <circle cx="18" cy="19" r="3"/>
+            <line x1="8.6" y1="10.5" x2="15.4" y2="6.5"/>
+            <line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/>
+          </svg>
+          <svg class="icon-off" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </button>
+      </div>
+      <textarea id="names" spellcheck="false" placeholder="Ada
+Grace
+Katherine
+Margaret
+Hedy"></textarea>
+      <ul class="roster" id="roster" aria-label="Enable or disable contestants without removing them"></ul>
+      <div class="count-line">
+        <span>On the wheel</span>
+        <strong id="countBadge">0</strong>
+      </div>
+
+      <div class="variant-picker">
+        <label class="field-label" for="variantSelect">Spin style</label>
+        <select id="variantSelect" autocomplete="off">
+          <option value="classic" selected>Classic — clean stop</option>
+          <option value="grow">Variant 1 — Growing Field</option>
+          <option value="centrifuge">Variant 2 — Centrifuge</option>
+        </select>
+      </div>
+
+      <div class="palette-field">
+        <label class="field-label" for="paletteInput">Wheel colors (optional)</label>
+        <div class="palette-row">
+          <input type="text" id="paletteInput" placeholder="#0532ff, #000c15, #ebe6da, #e6aa33, #af2a2c, #4365ff" />
+          <button type="button" id="resetPaletteBtn" class="text-btn">Reset</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="token-footer" id="tokenFooter" hidden>
+    <span>🔥 <strong id="tokenFooterTotal">0</strong> tokens burned building this</span>
+    <span class="info-icon" tabindex="0" aria-label="Tokens burned per model">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="9"/>
+        <line x1="12" y1="11" x2="12" y2="16.5"/>
+        <circle cx="12" cy="7.5" r="0.75" fill="currentColor" stroke="none"/>
+      </svg>
+      <div class="info-popover" id="tokenInfoPopover" role="tooltip"></div>
+    </span>
+  </footer>
+
+</div>
+
+
+</body>
+</html>
