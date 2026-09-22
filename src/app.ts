@@ -258,6 +258,23 @@ export class WheelApp {
     return Math.floor((rotation - POINTER_ANGLE) / segAngle);
   }
 
+  /** Which slice the pointer is actually resting on, for a uniform 2*PI/n layout.
+   *
+   *  Note this is NOT segmentBucket's numbering: slices are defined in the wheel's own
+   *  (unrotated) frame as [i*segAngle, (i+1)*segAngle), so the wheel-local angle under the
+   *  fixed pointer is POINTER_ANGLE - rotation — the opposite sign from segmentBucket, which
+   *  only ever gets differenced against itself to count crossings and so doesn't care about
+   *  direction. Wrapped into 0..n-1 because this one indexes a real name.
+   *
+   *  A variant whose frame isn't the uniform grid reports its own answer from renderFrame
+   *  instead (see SpinVariantPlugin.renderFrame). */
+  private sliceUnderPointer(rotation: number, segAngle: number, n: number): number {
+    const local = POINTER_ANGLE - rotation;
+    const twoPi = Math.PI * 2;
+    const normalized = ((local % twoPi) + twoPi) % twoPi;
+    return Math.min(n - 1, Math.floor(normalized / segAngle));
+  }
+
   /** Kicks the flapper once per segment boundary crossed since the last sample, whether by hand or by physics. */
   private feelSegmentCrossing(fromBucket: number, toBucket: number, angularSpeed: number): void {
     const crossings = Math.abs(toBucket - fromBucket);
@@ -419,6 +436,9 @@ export class WheelApp {
     // index — these are different numbering schemes (continuous vs wrapped 0..n-1), so a frame
     // that switches between them must re-baseline instead of diffing across the switch.
     let lastBucketWasUniform = true;
+    // The most recent slice index the variant reported for its own (non-uniform) layout, if any.
+    // Read once the wheel is at rest to decide the actual winner — see the finish branch below.
+    let lastVariantBucket: number | void;
     let lastFrameTime = performance.now();
     const startTime = lastFrameTime;
     let wheelDone = false;
@@ -442,6 +462,7 @@ export class WheelApp {
       this.applyRotation();
 
       const variantBucket = plugin.renderFrame(els, { t, theta: this.rotation - startRotation, omega: angularSpeed, done: wheelDone, names, winnerIndex });
+      lastVariantBucket = variantBucket;
 
       if (segAngle > 0) {
         const isUniform = variantBucket === undefined;
@@ -462,7 +483,17 @@ export class WheelApp {
         this.rafId = null;
         this.phase = "idle";
         if (winnerIndex !== null) {
-          this.finishSpin(winnerIndex, plugin);
+          // The winner is whatever the pointer is physically resting on now that everything has
+          // stopped — not the index prepareSpin aimed for. Those agree for a plain wheel, but a
+          // variant is free to reshape the slices under the pointer as it settles (Growing Field
+          // widens one slice and pins the pointer inside it), and when they disagree what's on
+          // screen has to win: announcing the planned index would name someone the wheel visibly
+          // isn't pointing at. Variants that aren't on the uniform grid report the slice under
+          // the pointer themselves; everyone else gets read off the final rotation.
+          const landedIndex = typeof lastVariantBucket === "number"
+            ? lastVariantBucket
+            : this.sliceUnderPointer(this.rotation, segAngle, names.length);
+          this.finishSpin(landedIndex, plugin);
         } else {
           this.showBadge("Not quite enough oomph — give it a firmer spin!", true);
         }

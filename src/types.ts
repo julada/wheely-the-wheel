@@ -81,8 +81,10 @@ export interface SpinVariantPlugin {
    *  the index of whichever slice the pointer is currently over — the caller uses this instead of
    *  its own uniform-grid math to decide when to click/kick the flapper, so a pointer that's
    *  deliberately being kept inside one slice (see Growing Field) doesn't generate phantom
-   *  boundary-crossing ticks. Return void/undefined while this frame's layout is still the
-   *  uniform grid, so the caller falls back to its own calculation. */
+   *  boundary-crossing ticks. The value reported on the final, at-rest frame is also what gets
+   *  announced as the winner, so this has to be the slice genuinely under the pointer — not a
+   *  slice the variant merely prefers. Return void/undefined while this frame's layout is still
+   *  the uniform grid, so the caller falls back to its own calculation. */
   renderFrame(els: RenderElements, state: SpinFrameState): number | void;
 
   onFinish?(ctx: SpinFinishContext): void | Promise<void>;
