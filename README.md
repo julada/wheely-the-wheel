@@ -2,6 +2,10 @@
 
 A wheel-of-fortune picker: type in names, spin, someone gets chosen.
 
+[Start spinning!](https://julada.github.io/wheely-the-wheel/)
+
+![](./screenshots/app.png)
+
 ## Contributing
 
 This repo only accepts vibe-coded contributions — no hand-written PRs. Every commit self-reports
